@@ -105,12 +105,12 @@ nfpms:
       - rpm
 
 # xref: https://goreleaser.com/customization/verifiable_builds/
-gomod:
-  proxy: true
-  env:
-    - GOPROXY=https://proxy.golang.org,direct
-    - GOSUMDB=sum.golang.org
-  mod: mod
+#gomod:
+#  proxy: true
+#  env:
+#    - GOPROXY=https://proxy.golang.org,direct
+#    - GOSUMDB=sum.golang.org
+#  mod: mod
 
 # xref: https://goreleaser.com/customization/snapshots/
 snapshot:
