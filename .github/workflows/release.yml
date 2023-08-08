@@ -29,6 +29,14 @@ jobs:
       - name: Unshallow clone for tags
         run: git fetch --prune --unshallow --tags
 
+      - name: Verify tag is signed
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          if ! git verify-tag --raw ${{ github.ref }}; then
+            echo "Refusing to release unsigned ${{ github.ref }}."
+            exit 1
+          fi
+
       - name: Setup Go
         uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
         with:
