@@ -275,6 +275,50 @@ changelog:
 release:
   prerelease: auto
   header: |
+    ## Installation
+
+    To install `{{ .ProjectName }}`, download one of the pre-built binaries available for your platform from the artifacts attached to this release.
+
+    For example, for Linux on AMD64:
+
+    ```shell
+    # Download the binary
+    curl -LO https://github.com/{{ .Env.GITHUB_REPOSITORY }}/releases/download/v{{ .Version }}/{{ .ProjectName }}-v{{ .Version }}.linux.amd64
+
+    # Download the checksums file
+    curl -LO https://github.com/{{ .Env.GITHUB_REPOSITORY }}/releases/download/v{{ .Version }}}/{{ .ProjectName }}-v{{ .Version }}.checksums.txt
+
+    # Move the binary in to your PATH
+    mv {{ .ProjectName }}-v{{ .Version }}.linux.amd64 /usr/local/bin/{{ .ProjectName }}
+    ```
+
+    ### Verify checksums file signature
+
+    The checksums file is signed with [Cosign](https://docs.sigstore.dev/cosign/overview/) using GitHub OIDC. To verify the signature, run the following commands:
+
+    ```shell
+    # Download the checksums file, certificate and signature
+    curl -LO https://github.com/{{ .Env.GITHUB_REPOSITORY }}/releases/download/v{{ .Version }}}/{{ .ProjectName }}-v{{ .Version }}.checksums.txt
+    curl -LO https://github.com/{{ .Env.GITHUB_REPOSITORY }}/releases/download/v{{ .Version }}}/{{ .ProjectName }}-v{{ .Version }}.checksums.pem
+    curl -LO https://github.com/{{ .Env.GITHUB_REPOSITORY }}/releases/download/v{{ .Version }}}/{{ .ProjectName }}-v{{ .Version }}.checksums.sig
+
+    # Verify the checksums file
+    cosign verify-blob {{ .ProjectName }}-v{{ .Version }}.checksums.txt \
+      --certificate {{ .ProjectName }}-v{{ .Version }}.checksums.pem \
+      --signature {{ .ProjectName }}-v{{ .Version }}.checksums.sig \
+      --certificate-identity-regexp=https://github.com/{{ .Env.GITHUB_REPOSITORY_OWNER }} \
+      --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+    ```
+
+    ### Verify binary integrity
+
+    To verify the integrity of the binary you downloaded, you can use the checksums file available in the artifacts attached to this release after verifying the signature of the checksums file.
+
+    ```shell
+    # Verify the binary using the checksums file
+    sha256sum -c {{ .ProjectName }}-v{{ .Version }}.checksums.txt --ignore-missing
+    ```
+
     ## Container images
 
     Supported architectures: `linux/amd64` and `linux/arm64`.
